@@ -1,0 +1,8 @@
+This is the README file for the SJSU (IBM Cohort2) CmpE275 
+Project 2 project, AKA "Reach Out".
+
+Reach Out is an exercise in designing and implementing a set of
+social "communities" on a fully distributed base.  That is, the
+system has no centralized servers or points of control, and 
+community services can be added and removed dynamically.
+
