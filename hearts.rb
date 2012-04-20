@@ -27,8 +27,3 @@ end
 get '/hearts/charities/:name/*' do
   
 end
-
-
-
-
-
