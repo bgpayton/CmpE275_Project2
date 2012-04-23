@@ -1,23 +1,25 @@
+require 'json'
+require 'Singleton'
+require './config'
+require 'rest_client'
 
 
 class Service
-  
-  def serviceConfigFile
-    "please override"
-  end
-  
-  def blackMarkerConfigFile
-    "please override"
-  end
-  
-  def config()
-    configuration = IO.readlines(CONFIG_FILE)
-    jsonConfig = configuration.join("")
-    @config = JSON.parse(jsonConfig)
+  include Singleton
+  include ConfigReader
+  attr_accessor :config
     
-    blackMarkerConfig = IO.readlines(BLACK_MARKER_CONFIG)
-    jsonBackMarkerConfig = blackMarkerConfig.join("")
-    blackMarker = JSON.parse(jsonBackMarkerConfig)
-    @blackMarkerPort = blackMarker["port"]
+  def initialize(config, blackMarkerConfigFile)
+    @config = getConfig(config)
+    puts config
+    blackMarkerConfig = getConfig(blackMarkerConfigFile)
+    @blackMarkerPort = blackMarkerConfig["port"]
+    set :port, @config["port"]
+    register("http://localhost:#{@blackMarkerPort}/service", JSON.generate(@config))
+  end
+  
+  def register(url, data)
+    puts RestClient.post(url, data)
   end
 end
+  

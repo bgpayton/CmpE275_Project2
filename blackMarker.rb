@@ -1,34 +1,58 @@
 require './config'
+
 require 'sinatra'
 require 'singleton'
 require 'json'
 require 'rest_client'
 
 
-CONFIG_FILE = "blackMarker.config"
+class FriendDefinition
+  attr_accessor :id, :ip, :port
+  
+  def initialize(hash)
+    @id = hash["id"]
+    @ip = hash["ip"]
+    @port = hash["port"]
+  end
+  
+  def to_json(*a)
+    {
+      "id" => @id,
+      "ip" => @ip,
+      "port" => @port
+    }.to_json(*a)
+  end
+  
+end
 
 class BlackMarker
   include Singleton
-    attr_accessor :services
+  include ConfigReader
+  
+  @@CONFIG_FILE = "blackMarker.config"
 
+  attr_accessor :services, :id, :port, :friends
   
   def initialize()
     @services = Hash.new
+    @configHash = getConfig(@@CONFIG_FILE)
+    @id = @configHash['id']
+    @port = @configHash['port']
+    @friends = []
+    @configHash["friends"].each {|friend| @friends.push(FriendDefinition.new(friend))}
   end
-end
-
-@mainConfig = nil
-def getConfig()
-  if @mainConfig == nil
-    @mainConfig = ReachoutConfig.new(CONFIG_FILE)
-  end
-  @mainConfig
+  
 end
 
 def main(args)
-  cfg = getConfig
-  set :port, cfg.port
+  router = BlackMarker.instance
+  set :port, router.port
 end
+
+if __FILE__ == $0
+  main(ARGV)
+end
+
 
 post '/service' do
   #a service will make itself known here
@@ -44,10 +68,10 @@ get '/service' do
   JSON.generate(head.services)
 end
 
-if __FILE__ == $0
-  main(ARGV)
+get '/friends' do
+  router = BlackMarker.instance
+  JSON.generate(router.friends)
 end
-
 
 
 get '/:servicePrefix/*' do

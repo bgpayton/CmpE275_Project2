@@ -1,40 +1,22 @@
+
+require './service'
 require 'sinatra'
-require 'singleton'
-require 'rest_client'
-require 'json'
 
 
-CONFIG_FILE = "hands.config"
-BLACK_MARKER_CONFIG = "blackMarker.config"
-
-class Hands
-  include Singleton
-  attr_accessor :config
+class Hands < Service
+  @@CONFIG_FILE = "hands.config"
+  @@BLACK_MARKER_CONFIG = "blackMarker.config"
   
   def initialize()
-    configuration = IO.readlines(CONFIG_FILE)
-    jsonConfig = configuration.join("")
-    @config = JSON.parse(jsonConfig)
-    
-    blackMarkerConfig = IO.readlines(BLACK_MARKER_CONFIG)
-    jsonBackMarkerConfig = blackMarkerConfig.join("")
-    blackMarker = JSON.parse(jsonBackMarkerConfig)
-    @blackMarkerPort = blackMarker["port"]
+    super(@@CONFIG_FILE, @@BLACK_MARKER_CONFIG)
   end
   
-  def register()
-    puts RestClient.post("http://localhost:#{@blackMarkerPort}/service", JSON.generate(@config))
-  end
 end
-
 
 
 def main(args)
   hands = Hands.instance
-  set :port, hands.config["port"]
-  hands.register
 end
-
 
 if __FILE__ == $0
   main(ARGV)
