@@ -2,7 +2,7 @@ require './service'
 require 'sinatra'
 
 
-class Hands < Service
+class Hearts < Service
   @@CONFIG_FILE = "hearts.config"
   @@BLACK_MARKER_CONFIG = "blackMarker.config"
   
@@ -13,7 +13,7 @@ end
 
 
 def main(args)
-  hands = Hands.instance
+  hearts = Hearts.instance
 end
 
 if __FILE__ == $0
