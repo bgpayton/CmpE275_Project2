@@ -1,5 +1,31 @@
+
+require './service'
 require 'sinatra'
-require 'mongo'
+
+
+class Hands < Service
+  @@CONFIG_FILE = "hands.config"
+  @@BLACK_MARKER_CONFIG = "blackMarker.config"
+  
+  def initialize()
+    super(@@CONFIG_FILE, @@BLACK_MARKER_CONFIG)
+  end
+  
+end
+
+
+def main(args)
+  hands = Hands.instance
+end
+
+if __FILE__ == $0
+  main(ARGV)
+end
+
+
+get '/hands' do
+  "hands"
+end
 
 get '/hands/mentors/' do
   #return a list of available mentors
@@ -15,6 +41,10 @@ end
 
 get '/hands/mentors/:mentorId/messages' do
   #get messages for a mentor
+end
+
+get '/hands/*' do
+  params[:splat][0]
 end
 
 

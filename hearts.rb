@@ -1,14 +1,31 @@
+require './service'
 require 'sinatra'
-require 'mongo'
+
+
+class Hearts < Service
+  @@CONFIG_FILE = "hearts.config"
+  @@BLACK_MARKER_CONFIG = "blackMarker.config"
+  
+  def initialize()
+    super(@@CONFIG_FILE, @@BLACK_MARKER_CONFIG)
+  end
+end
+
+
+def main(args)
+  hearts = Hearts.instance
+end
+
+if __FILE__ == $0
+  main(ARGV)
+end
+
+
 
 get '/hearts/charities/' do
   #check neighbors max hops = 
   #return a list of charities
   
-end
-
-get '/hearts/charities/:hops' do
-  #return a list of charities
 end
 
 post '/hearts/charities' do
