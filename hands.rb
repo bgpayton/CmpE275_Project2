@@ -1,6 +1,5 @@
-
-require './service'
 require 'sinatra'
+require './service'
 
 
 class Hands < Service
@@ -16,6 +15,8 @@ end
 
 def main(args)
   hands = Hands.instance
+  #puts hands.forwardGetRequest('/hands/mentors', {"hops" => 4, "msgId"=>"test", "origin"=>"testOrigin"})
+  #puts hands.forwardGetRequest('/hands/mentors', {})
 end
 
 if __FILE__ == $0
@@ -44,7 +45,11 @@ get '/hands/mentors/:mentorId/messages' do
 end
 
 get '/hands/*' do
-  params[:splat][0]
+  
+  hands = Hands.instance
+  result = hands.forwardGetRequest(env["PATH_INFO"], {"hops" => params["hops"], "msgId" => params["msgId"], "origin" => params["origin"]})
+  result.push("this is my result")
+  result
 end
 
 
